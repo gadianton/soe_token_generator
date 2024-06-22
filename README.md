@@ -34,7 +34,7 @@ python3 -m pip install -r requirements.txt --trusted-host pypi.org --trusted-h
 > NOTE: Depending on your installation of Python, you may need to use `python` or `py` instead of `python3` in the command above. If `python3` is not a recognized command, you can check which command to use by running `python --version` or `py --version` in your terminal and seeing which responds with the installed Python version.
 
 
-**Obtain a client ID**
+**Obtain a Client ID**
 * Go to the Stack Overflow Enterprise web interface
 * Go to your user profile (top-right corner of the interface)
 * Go to the "Settings" tab (next to the "Profile" and "Activity" tabs)
@@ -67,7 +67,7 @@ python3 token_generator.py
 
 ## How it Works
 
-For those of you who are familiar with the authorization code flow with PKCE, here's are the things this script is doing to simplify your life:
+For those of you who are familiar with the authorization code flow with PKCE, here is what the script is performing behind the scenes in order to simplify your life:
 * Generates a Base64-encoded code verifier
 * Generates a code challenge by hashing the code verifier with SHA256, then encoding it with Base64
 * Generates a randomized 10-character string to act as the "state" parameter
