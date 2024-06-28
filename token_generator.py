@@ -5,6 +5,7 @@ import os
 import random
 import re
 import string
+from urllib.parse import unquote
 import webbrowser
 
 # Open source libraries
@@ -17,16 +18,25 @@ def main():
     client_id = get_client_id()
     write_access = get_write_access_scope()
     no_expiry = get_no_expiry_scope()
+    access_team = get_access_team_scope()
     code_verifier = create_code_verifier()
 
     oauth_url = url + '/oauth'
     redirect_uri = oauth_url + '/login_success'
-    if write_access and no_expiry:
+    if write_access and no_expiry and access_team:
+        scope = "write_access,no_expiry,access_team"
+    elif write_access and no_expiry:
         scope = "write_access,no_expiry"
-    if write_access:
+    elif write_access and access_team:
+        scope = "write_access,access_team"
+    elif no_expiry and access_team:
+        scope = "no_expiry,access_team"
+    elif write_access:
         scope = "write_access"
-    if no_expiry:
+    elif no_expiry:
         scope = "no_expiry"
+    elif access_team:
+        scope = "access_team"
     else:
         scope = None
 
@@ -34,7 +44,8 @@ def main():
                                                 client_id, scope)
     token = get_token(oauth_url, client_id, redirect_uri, authorization_code, code_verifier)
     print("Here is your API token (below). Please keep it safe and don't share it.")
-    print(token)
+    print(f"API token >>> {token}")
+    return token
 
 
 def get_url():
@@ -84,6 +95,17 @@ def get_no_expiry_scope():
             return convert_input_to_bool(no_expiry)
 
 
+def get_access_team_scope():
+
+    while True:
+        access_team = input('Do you want the API token to have access to a private team? (y/n) ')
+        if access_team.lower() not in ["n", "y"]:
+            print("Please enter a 'y' or 'n'")
+            continue
+        else:
+            return convert_input_to_bool(access_team)
+
+
 def convert_input_to_bool(user_input):
 
     if user_input == 'y':
@@ -99,7 +121,8 @@ def get_authorization_code(oauth_url, code_verifier, redirect_uri, client_id, sc
     state = create_random_string(10)
 
     print("A browser tag is going to open and ask you to authenticate Stack Oveflow Enterprise")
-    print("After successfully authenticating, copy the entire URL to your clipboard and return to "
+    print("After successfully authenticating, you'll arrive a webpage that says "
+          "'Authorizing Application'. Copy the URL of that page to your clipboard and return to "
           "this window.")
     input("Press Enter when ready...")
     webbrowser_url = f"{oauth_url}?client_id={client_id}&scope={scope}&state={state}&" \
@@ -108,7 +131,10 @@ def get_authorization_code(oauth_url, code_verifier, redirect_uri, client_id, sc
     webbrowser.open_new_tab(webbrowser_url)
 
     response_url = input("Please paste the URL from the previous step: ")
+    # authorization_code = re.search(r'code=(.+?\)\))', response_url).group(1)
     authorization_code = re.search(r'code=(.+?)&', response_url).group(1)
+    if "%" in authorization_code:
+        authorization_code = unquote(authorization_code)
 
     return authorization_code
 
