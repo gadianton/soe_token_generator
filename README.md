@@ -61,7 +61,11 @@ python3 token_generator.py
     * The client ID you obtained in the [Setup](https://github.com/jklick-so/soe_token_generator?tab=readme-ov-file#setup) section of these instructions
     * Whether or not you want your token to have write permissions (see note at the bottom of the Client ID instructions above)
     * Whether or not you want your token to have an expiration. By default, all API tokens expire in 24 hours.
-* The script will then open a browser tab where you will need to authenticate with Stack Overflow Enterprise.
+    * Whether or not you want your token to be for a private team. If you are not using private teams, this should be "n".
+
+> NOTE: A token for a private team can ONLY be used for API calls to that specific private team. Likewise, a token that is not for a private team, can only be used for the main site. 
+
+* The script will then open a browser tab where you will need to authenticate with Stack Overflow Enterprise. At this point, if you elected to create a token for a private team, this will be your opportunity to select which private team it's for. 
 * After authenticating, you'll be redirected to a new URL. Copy the entire URL from your browser tab and paste it into the window where you're running the script.
 * Lastly, the script will output your API token.
 
